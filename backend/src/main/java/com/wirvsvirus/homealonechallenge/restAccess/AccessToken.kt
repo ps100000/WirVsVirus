@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
+annotation class NoAuthentication;
+
 data class AccessTokenAnswer(
     val userId: Int,
     val seed: String,
@@ -31,6 +33,7 @@ const val tokenValidMs = 10 * 60 * 1000
 
 @RestController() class AccessTokenRest {
     private val digest = MessageDigest.getInstance("SHA-256")
+    @NoAuthentication
     @GetMapping("/token")
     fun newToken(@RequestParam("username") username: String ): ResponseEntity<AccessTokenAnswer> {
         if (!username.matches(usernameRegex)) {
@@ -98,8 +101,7 @@ class AccessTokenInterceptorConfigurer : WebMvcConfigurer {
 class AccessTokenServiceInterceptor : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val handlerType = (handler as HandlerMethod).beanType
-        if (handlerType == AccessTokenRest::class.java ) {
+        if ( (handler as HandlerMethod).hasMethodAnnotation(NoAuthentication::class.java) ) {
             return true
         }
 

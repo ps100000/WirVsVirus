@@ -1,6 +1,7 @@
 package com.wirvsvirus.homealonechallenge.rest
 
 import com.wirvsvirus.homealonechallenge.db.SpringJdbc
+import com.wirvsvirus.homealonechallenge.restAccess.NoAuthentication
 import com.wirvsvirus.homealonechallenge.restAccess.sha256Regex
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,12 +36,7 @@ data class UserPut(
 )
 
 val usernameRegex = Regex("^[a-zA-Z0-9.\\-]+$")
-/*@PathParam  @RequestBody @RequestParam*/
-/*
-@GetMapping("/method7/{id}")
-fun getUser(@PathVariable("id") id: String): String {
-    return id
-}*/
+
 @RestController() class UserRest{
     private fun doesUserExists(username: String, mail: String = ""): Boolean{
         val rs: ResultSet = SpringJdbc.executeQuery("SELECT COUNT (*) FROM users WHERE username=? OR mail=?;") {
@@ -63,6 +59,7 @@ fun getUser(@PathVariable("id") id: String): String {
         return ResponseEntity(UserInfo(rs.getString("username"), rs.getString("mail"), userId), HttpStatus.OK)
     }
 
+    @NoAuthentication
     @PostMapping("/user")
     fun addUser(@RequestBody userData: UserPost): ResponseEntity<UserInfo> {
         if (!userData.username.matches(usernameRegex)) {
