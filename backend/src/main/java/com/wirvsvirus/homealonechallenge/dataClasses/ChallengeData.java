@@ -2,26 +2,20 @@ package com.wirvsvirus.homealonechallenge.dataClasses;
 
 public class ChallengeData {
 
-    public final String challengeID;
     public final String challengeName;
     public final String challengeDescription;
     public final String challengeTag;
-    public final String challengeCreator;
+    public final int challengeCreator;
 
-    public ChallengeData(String challengeID, String challengeName, String challengeDescription, String challengeTag, String challengeCreator) {
-        this.challengeID = challengeID;
+    public ChallengeData(String challengeName, String challengeDescription, String challengeTag, int challengeCreator) {
         this.challengeName = challengeName;
         this.challengeDescription = challengeDescription;
         this.challengeTag = challengeTag;
         this.challengeCreator = challengeCreator;
     }
 
-    public String getChallengeCreator() {
+    public int getChallengeCreator() {
         return challengeCreator;
-    }
-
-    public String getChallengeID() {
-        return challengeID;
     }
 
     public String getChallengeName() {
