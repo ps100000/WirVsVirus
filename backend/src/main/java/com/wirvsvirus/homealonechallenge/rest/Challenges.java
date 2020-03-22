@@ -29,7 +29,7 @@ public class Challenges {
         });
         try {
             if (!rs.next()) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             challengeName = rs.getString("name");
             challengeDescription = rs.getString("description");
@@ -44,13 +44,13 @@ public class Challenges {
                 return Unit.INSTANCE;
             });
             if (!rs2.next()) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             creatorName = rs2.getString("username");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new ResponseEntity(new ChallengeDbEntry(challengeName, challengeDescription, challengeTag, creatorName), HttpStatus.OK);
+        return new ResponseEntity<>(new ChallengeDbEntry(challengeName, challengeDescription, challengeTag, creatorName), HttpStatus.OK);
     }
 
     @PostMapping("/challenges")
@@ -66,7 +66,7 @@ public class Challenges {
         });
         try {
             if (!rs.next()) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             int userID = rs.getInt("user_id");
             SpringJdbc.Companion.executeUpdate("INSERT INTO challenges(name, description, tag, creator) VALUES(?, ?, ?, ?)", pst -> {
@@ -82,10 +82,10 @@ public class Challenges {
             });
         } catch (SQLException e) {
             e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity(new BooleanReturn(true), HttpStatus.OK);
+        return new ResponseEntity<>(new BooleanReturn(true), HttpStatus.OK);
     }
 
     @PutMapping("/challenges/{challengeID}")
@@ -101,7 +101,7 @@ public class Challenges {
         });
         try {
             if (!rs.next()) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             int userID = rs.getInt("user_id");
 
@@ -119,9 +119,9 @@ public class Challenges {
             });
         } catch (SQLException e) {
             e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity(new BooleanReturn(true), HttpStatus.OK);
+        return new ResponseEntity<>(new BooleanReturn(true), HttpStatus.OK);
     }
 
     @DeleteMapping("/challenges/{challengeID}")
@@ -134,6 +134,6 @@ public class Challenges {
             }
             return Unit.INSTANCE;
         });
-        return new ResponseEntity(new BooleanReturn(true), HttpStatus.OK);
+        return new ResponseEntity<>(new BooleanReturn(true), HttpStatus.OK);
     }
 }
