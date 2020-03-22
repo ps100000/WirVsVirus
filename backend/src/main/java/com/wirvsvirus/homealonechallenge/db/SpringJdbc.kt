@@ -1,10 +1,7 @@
 package com.wirvsvirus.homealonechallenge.db
 
-import ch.qos.logback.core.db.DriverManagerConnectionSource
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
 import java.sql.*
+import kotlin.system.exitProcess
 
 class SpringJdbc {
     companion object{
@@ -18,12 +15,22 @@ class SpringJdbc {
 
         fun executeUpdate(query: String, fill: (PreparedStatement) -> Unit = {}): Int{
             val pst: PreparedStatement = connection.prepareStatement(query)
-            fill(pst)
+            try {
+                fill(pst)
+            } catch (e: SQLException) {
+                e.printStackTrace()
+                exitProcess(2)
+            }
             return pst.executeUpdate()
         }
         fun executeQuery(query: String, fill: (PreparedStatement) -> Unit = {}): ResultSet{
             val pst: PreparedStatement = connection.prepareStatement(query)
-            fill(pst)
+            try {
+                fill(pst)
+            } catch (e: SQLException) {
+                e.printStackTrace()
+                exitProcess(2)
+            }
             return pst.executeQuery()
         }
     }
@@ -34,9 +41,10 @@ object JdbcPostgresqlDriverUrlExample {
     @JvmStatic
     fun main(args: Array<String>) {
         try {
-            val rs: ResultSet = SpringJdbc.executeQuery("SELECT VERSION()")
-            if (rs.next()) {
-                println(rs.getString(1));
+            println(SpringJdbc.executeUpdate("insert into users (username, pwd, mail) values ('a', 'b', 'c')"))
+            val rs: ResultSet = SpringJdbc.executeQuery("SELECT * FROM users")
+            while (rs.next()) {
+                println(rs.getString(1) + ' ' + rs.getString(2) + ' ' + rs.getString(3) + ' ' + rs.getString(4))
             }
         } catch (e: ClassNotFoundException) {
             e.printStackTrace()
