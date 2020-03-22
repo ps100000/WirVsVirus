@@ -1,5 +1,6 @@
 package com.wirvsvirus.homealonechallenge.rest;
 
+import com.wirvsvirus.homealonechallenge.dataClasses.BooleanReturn;
 import com.wirvsvirus.homealonechallenge.dataClasses.ChallengeDbEntry;
 import com.wirvsvirus.homealonechallenge.db.SpringJdbc;
 import kotlin.Unit;
@@ -28,13 +29,13 @@ public class Challenges {
         });
         try {
             if (!rs.next()) {
-                return null;
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
             challengeName = rs.getString("name");
             challengeDescription = rs.getString("description");
             challengeTag = rs.getString("tag");
             final int challengeCreator = rs.getInt("creator");
-            ResultSet rs2 = SpringJdbc.Companion.executeQuery("SELECT * FROM users WHERE user_id = ?", pst -> {
+            ResultSet rs2 = SpringJdbc.Companion.executeQuery("SELECT username FROM users WHERE user_id = ?", pst -> {
                 try {
                     pst.setInt(1, challengeCreator);
                 } catch (SQLException e) {
@@ -53,9 +54,9 @@ public class Challenges {
     }
 
     @PostMapping("/challenges")
-    public boolean createChallenge(@RequestBody ChallengeDbEntry data) {
+    public ResponseEntity<BooleanReturn> createChallenge(@RequestBody ChallengeDbEntry data) {
 
-        ResultSet rs = SpringJdbc.Companion.executeQuery("SELECT * FROM users WHERE username = ?", pst -> {
+        ResultSet rs = SpringJdbc.Companion.executeQuery("SELECT user_id FROM users WHERE username = ?", pst -> {
             try {
                 pst.setString(1, data.challengeCreator);
             } catch (SQLException e) {
@@ -65,7 +66,7 @@ public class Challenges {
         });
         try {
             if (!rs.next()) {
-                return false;
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
             int userID = rs.getInt("user_id");
             SpringJdbc.Companion.executeUpdate("INSERT INTO challenges(name, description, tag, creator) VALUES(?, ?, ?, ?)", pst -> {
@@ -81,13 +82,14 @@ public class Challenges {
             });
         } catch (SQLException e) {
             e.printStackTrace();
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return true;
+        return new ResponseEntity(new BooleanReturn(true), HttpStatus.OK);
     }
 
     @PutMapping("/challenges/{challengeID}")
-    public boolean overwriteChallenge(@PathVariable("challengeID") int challengeID, @RequestBody ChallengeDbEntry data) {
+    public ResponseEntity<BooleanReturn> overwriteChallenge(@PathVariable("challengeID") int challengeID, @RequestBody ChallengeDbEntry data) {
 
         ResultSet rs = SpringJdbc.Companion.executeQuery("SELECT * FROM users WHERE username = ?", pst -> {
             try {
@@ -99,7 +101,7 @@ public class Challenges {
         });
         try {
             if (!rs.next()) {
-                return false;
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
             int userID = rs.getInt("user_id");
 
@@ -117,7 +119,21 @@ public class Challenges {
             });
         } catch (SQLException e) {
             e.printStackTrace();
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return true;
+        return new ResponseEntity(new BooleanReturn(true), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/challenges/{challengeID}")
+    public ResponseEntity<BooleanReturn> deleteChallenge(@PathVariable("challengeID") int challengeID) {
+        SpringJdbc.Companion.executeUpdate("DELETE FROM challenges WHERE challenge_id = ?", pst -> {
+            try {
+                pst.setInt(1, challengeID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Unit.INSTANCE;
+        });
+        return new ResponseEntity(new BooleanReturn(true), HttpStatus.OK);
     }
 }
