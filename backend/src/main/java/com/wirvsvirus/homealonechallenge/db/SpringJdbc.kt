@@ -1,7 +1,6 @@
 package com.wirvsvirus.homealonechallenge.db
 
 import java.sql.*
-import kotlin.system.exitProcess
 
 class SpringJdbc {
     companion object{
@@ -15,22 +14,12 @@ class SpringJdbc {
 
         fun executeUpdate(query: String, fill: (PreparedStatement) -> Unit = {}): Int{
             val pst: PreparedStatement = connection.prepareStatement(query)
-            try {
-                fill(pst)
-            } catch (e: SQLException) {
-                e.printStackTrace()
-                exitProcess(2)
-            }
+            fill(pst)
             return pst.executeUpdate()
         }
         fun executeQuery(query: String, fill: (PreparedStatement) -> Unit = {}): ResultSet{
             val pst: PreparedStatement = connection.prepareStatement(query)
-            try {
-                fill(pst)
-            } catch (e: SQLException) {
-                e.printStackTrace()
-                exitProcess(2)
-            }
+            fill(pst)
             return pst.executeQuery()
         }
     }
