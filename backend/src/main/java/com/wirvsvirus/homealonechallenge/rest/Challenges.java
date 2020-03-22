@@ -73,7 +73,7 @@ public class Challenges {
                 try {
                     pst.setString(1, data.getChallengeName());
                     pst.setString(2, data.getChallengeDescription());
-                    pst.setInt(3, data.getChallengeTag().equals("Charity") ? 0 : data.getChallengeTag().equals("Sport") ? 1 : data.getChallengeTag().equals("Kreativität") ? 2 : data.getChallengeTag().equals("Haushalt") ? 3 : 4);
+                    pst.setInt(3, 1);
                     pst.setInt(4, userID);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -85,7 +85,7 @@ public class Challenges {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(new BooleanReturn(true), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/challenges/{challengeID}")
