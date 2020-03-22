@@ -4,13 +4,15 @@ import com.wirvsvirus.homealonechallenge.db.SpringJdbc
 import com.wirvsvirus.homealonechallenge.rest.usernameRegex
 import com.wirvsvirus.homealonechallenge.toHexString
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.security.MessageDigest
@@ -94,6 +96,9 @@ class AccessTokenInterceptorConfigurer : WebMvcConfigurer {
     var accessTokenServiceInterceptor: AccessTokenServiceInterceptor? = null
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(accessTokenServiceInterceptor as HandlerInterceptor)
+    }
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
     }
 }
 
